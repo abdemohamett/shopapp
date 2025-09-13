@@ -59,7 +59,13 @@ async function fetchProfile(slug: string): Promise<{
   console.log("Found customer:", foundCustomer);
   
   // Try to fetch orders, but don't fail if table doesn't exist yet
-  let orders: any[] = [];
+  let orders: Array<{
+    id: string;
+    quantity: number;
+    unit_price: number;
+    created_at: string;
+    inventory_items?: { name: string };
+  }> = [];
   try {
     const { data: ordersData, error: oErr } = await supabase
       .from("orders")
@@ -70,13 +76,20 @@ async function fetchProfile(slug: string): Promise<{
     if (oErr) {
       console.warn("Orders table may not exist yet or RLS issue:", oErr);
     } else {
-      orders = ordersData ?? [];
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      orders = (ordersData ?? []).map((order: any) => ({
+        id: order.id,
+        quantity: order.quantity,
+        unit_price: order.unit_price,
+        created_at: order.created_at,
+        inventory_items: order.inventory_items
+      }));
     }
   } catch (err) {
     console.warn("Orders query failed (table may not exist):", err);
   }
 
-  const normalized: Order[] = (orders ?? []).map((o: any) => ({
+  const normalized: Order[] = (orders ?? []).map((o) => ({
     id: o.id,
     quantity: o.quantity,
     unit_price: o.unit_price,

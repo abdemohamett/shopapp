@@ -9,13 +9,6 @@ export default async function AddCustomerPage() {
   const cookieStore = await cookies();
   if (cookieStore.get("auth")?.value !== "true") redirect("/");
 
-  async function submit(formData: FormData) {
-    "use server";
-    const name = String(formData.get("name") || "");
-    const slug = name.trim().toLowerCase().replace(/\s+/g, "-");
-    redirect(`/customers/${encodeURIComponent(slug)}`);
-  }
-
   return (
     <div className="min-h-dvh bg-gradient-to-br from-orange-50 via-white to-orange-50">
       {/* Header */}

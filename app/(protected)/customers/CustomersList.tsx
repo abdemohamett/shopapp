@@ -7,7 +7,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ArrowRight, MoreHorizontal } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 
 type Customer = { 
   id: string; 
@@ -39,7 +39,7 @@ const fetcher = async (): Promise<Customer[]> => {
   
   // Calculate total debt for each customer
   const customersWithDebt = (data ?? []).map(customer => {
-    const totalDebt = customer.orders?.reduce((sum: number, order: any) => 
+    const totalDebt = customer.orders?.reduce((sum: number, order: { quantity: number; unit_price: number }) => 
       sum + (order.quantity * Number(order.unit_price)), 0
     ) || 0;
     

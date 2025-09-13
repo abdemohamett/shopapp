@@ -43,7 +43,7 @@ const fetcher = async (): Promise<ReportData> => {
   // Calculate total debt and top debtors
   let totalDebt = 0;
   const customersWithDebt = (customers || []).map(customer => {
-    const customerDebt = customer.orders?.reduce((sum: number, order: any) => 
+    const customerDebt = customer.orders?.reduce((sum: number, order: { quantity: number; unit_price: number }) => 
       sum + (order.quantity * Number(order.unit_price)), 0
     ) || 0;
     

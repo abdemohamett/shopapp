@@ -3,7 +3,7 @@ import { cookies } from "next/headers";
 import Link from "next/link";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Users, Package, Wallet, UserPlus, BarChart3 } from "lucide-react";
+import { Users, Package, UserPlus, BarChart3 } from "lucide-react";
 import DashboardStats from "./dashboard-stats";
 
 export default async function DashboardPage() {

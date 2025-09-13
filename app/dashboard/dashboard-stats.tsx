@@ -2,7 +2,7 @@
 
 import useSWR from "swr";
 import { supabase } from "@/lib/supabase";
-import { Users, Package, Wallet } from "lucide-react";
+import { Users, Package } from "lucide-react";
 
 type Stats = {
   customers: number;
