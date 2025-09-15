@@ -110,14 +110,33 @@ const fetcher = async (): Promise<ReportData> => {
     .order("created_at", { ascending: false })
     .limit(5);
 
-  const formattedRecentTransactions = (recentTransactions || []).map(t => ({
-    id: t.id,
-    customer_name: t.customers?.name || "Unknown",
-    item_name: t.inventory?.name || "Unknown Item",
-    quantity: t.quantity,
-    total: t.total,
-    created_at: t.created_at
-  }));
+  type RawRecent = {
+    id: unknown;
+    quantity: unknown;
+    total: unknown;
+    created_at: unknown;
+    customers: unknown;
+    inventory: unknown;
+  };
+
+  const formattedRecentTransactions = ((recentTransactions || []) as RawRecent[]).map((t) => {
+    const customersCandidate = t.customers as unknown;
+    const inventoryCandidate = t.inventory as unknown;
+    const customerObj = Array.isArray(customersCandidate)
+      ? ((customersCandidate[0] as { name?: unknown }) ?? null)
+      : ((customersCandidate as { name?: unknown }) ?? null);
+    const inventoryObj = Array.isArray(inventoryCandidate)
+      ? ((inventoryCandidate[0] as { name?: unknown }) ?? null)
+      : ((inventoryCandidate as { name?: unknown }) ?? null);
+    return {
+      id: String(t.id),
+      customer_name: String(customerObj?.name ?? "Unknown"),
+      item_name: String(inventoryObj?.name ?? "Unknown Item"),
+      quantity: Number(t.quantity),
+      total: Number(t.total),
+      created_at: String(t.created_at),
+    };
+  });
 
   return {
     totalCustomers: customersCount || 0,
