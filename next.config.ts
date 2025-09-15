@@ -1,7 +1,8 @@
 import type { NextConfig } from "next";
+import path from "path";
 
 const nextConfig: NextConfig = {
-  // Minimal configuration to avoid deployment issues
+  outputFileTracingRoot: path.join(__dirname),
 };
 
 export default nextConfig;
