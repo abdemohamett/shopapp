@@ -12,7 +12,7 @@ export default async function ReportsPage() {
     <div className="min-h-dvh bg-gradient-to-br from-orange-50 via-white to-orange-50">
       {/* Header */}
       <div className="bg-white/80 backdrop-blur-sm border-b border-orange-100">
-        <div className="max-w-md mx-auto px-6 py-4">
+        <div className="max-w-md mx-auto lg:max-w-none lg:px-8 px-6 py-4">
           <div className="flex items-center gap-3">
             <Link href="/dashboard" className="flex items-center gap-3 hover:opacity-80 transition-opacity">
               <div className="w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center hover:bg-gray-200 transition-colors">
@@ -31,7 +31,7 @@ export default async function ReportsPage() {
       </div>
 
       {/* Content */}
-      <div className="max-w-md mx-auto p-6">
+      <div className="max-w-md mx-auto lg:max-w-7xl lg:px-8 p-6">
         <ReportsClient />
       </div>
     </div>

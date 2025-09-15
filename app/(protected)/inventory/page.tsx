@@ -8,7 +8,7 @@ export default function InventoryPage() {
     <div className="min-h-dvh bg-gradient-to-br from-orange-50 via-white to-orange-50">
       {/* Header */}
       <div className="bg-white/80 backdrop-blur-sm border-b border-orange-100">
-        <div className="max-w-md mx-auto px-6 py-4">
+        <div className="max-w-md mx-auto lg:max-w-none lg:px-8 px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <Link href="/dashboard" className="flex items-center gap-3 hover:opacity-80 transition-opacity">
@@ -34,7 +34,7 @@ export default function InventoryPage() {
       </div>
 
       {/* Content */}
-      <div className="max-w-md mx-auto p-6">
+      <div className="max-w-md mx-auto lg:max-w-7xl lg:px-8 p-6">
         <InventoryList />
       </div>
     </div>

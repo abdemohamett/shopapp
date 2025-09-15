@@ -1,9 +1,12 @@
 import { redirect } from "next/navigation";
 import { cookies } from "next/headers";
+import { supabase } from "@/lib/supabase";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Button } from "@/components/ui/button";
+// import { Button } from "@/components/ui/button";
+import { SubmitButton } from "@/components/submit-button";
+import { LoginAlerts } from "@/components/login-alerts";
 
 export default async function Page({
   searchParams,
@@ -23,17 +26,21 @@ export default async function Page({
     const username = String(formData.get("username") || "");
     const password = String(formData.get("password") || "");
 
-    const adminUser = process.env.ADMIN_USERNAME;
-    const adminPass = process.env.ADMIN_PASSWORD;
+    // Verify active user from Supabase `users` table
+    const { data: user, error } = await supabase
+      .from("users")
+      .select("id, username, role, active")
+      .eq("username", username)
+      .eq("password", password)
+      .eq("active", true)
+      .single();
 
-    // Basic check; envs exist only on server
-    const isValid = Boolean(adminUser && adminPass && username === adminUser && password === adminPass);
-
-    if (!isValid) {
+    if (error || !user) {
       redirect("/?error=Invalid%20credentials");
     }
 
     const cookieStore = await cookies();
+    // Server-side cookie for route protection
     cookieStore.set({
       name: "auth",
       value: "true",
@@ -43,6 +50,11 @@ export default async function Page({
       path: "/",
       maxAge: 60 * 60 * 24 * 7,
     });
+    cookieStore.set({ name: "role", value: String(user.role), path: "/", httpOnly: true, sameSite: "lax" });
+    cookieStore.set({ name: "uid", value: String(user.id), path: "/", httpOnly: true, sameSite: "lax" });
+    cookieStore.set({ name: "username", value: String(user.username), path: "/", httpOnly: true, sameSite: "lax" });
+    // UI-friendly cookie (non httpOnly) for client-side conditional UI
+    cookieStore.set({ name: "ui_role", value: String(user.role), path: "/" });
 
     redirect("/dashboard");
   }
@@ -89,12 +101,12 @@ export default async function Page({
                   <p className="text-sm text-red-600" aria-live="polite">{errorParam}</p>
                 </div>
               ) : null}
-              <Button 
-                type="submit" 
+              <SubmitButton
                 className="w-full h-12 rounded-xl text-lg font-semibold bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-[1.02]"
+                pendingText="Signing in..."
               >
                 Sign In
-              </Button>
+              </SubmitButton>
             </form>
           </CardContent>
         </Card>
@@ -103,6 +115,9 @@ export default async function Page({
         <div className="text-center text-sm text-gray-500">
           Secure shop management system
         </div>
+
+        {/* Error toast */}
+        <LoginAlerts error={errorParam} />
       </div>
     </div>
   );
