@@ -63,6 +63,15 @@ const customerFetcher = async (id: string): Promise<Customer | null> => {
   return data;
 };
 
+type RawTransactionRow = {
+  id: unknown;
+  quantity: unknown;
+  price: unknown;
+  total: unknown;
+  created_at: unknown;
+  inventory: unknown;
+};
+
 const transactionsFetcher = async (id: string): Promise<Transaction[]> => {
   const { data, error } = await supabase
     .from("transactions")
@@ -84,11 +93,12 @@ const transactionsFetcher = async (id: string): Promise<Transaction[]> => {
     return [];
   }
 
-  const rows: any[] = data ?? [];
+  const rows: RawTransactionRow[] = (data ?? []) as RawTransactionRow[];
   const normalized: Transaction[] = rows.map((row) => {
-    const inv = Array.isArray(row.inventory)
-      ? (row.inventory[0] ?? null)
-      : (row.inventory ?? null);
+    const invCandidate = row.inventory as unknown;
+    const inv = Array.isArray(invCandidate)
+      ? ((invCandidate[0] as { name?: unknown }) ?? null)
+      : ((invCandidate as { name?: unknown }) ?? null);
     return {
       id: String(row.id),
       quantity: Number(row.quantity),
