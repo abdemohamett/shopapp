@@ -83,8 +83,23 @@ const transactionsFetcher = async (id: string): Promise<Transaction[]> => {
     console.warn("Error fetching transactions:", error);
     return [];
   }
-  
-  return data ?? [];
+
+  const rows: any[] = data ?? [];
+  const normalized: Transaction[] = rows.map((row) => {
+    const inv = Array.isArray(row.inventory)
+      ? (row.inventory[0] ?? null)
+      : (row.inventory ?? null);
+    return {
+      id: String(row.id),
+      quantity: Number(row.quantity),
+      price: Number(row.price),
+      total: Number(row.total),
+      created_at: String(row.created_at),
+      inventory: { name: String(inv?.name ?? "") },
+    };
+  });
+
+  return normalized;
 };
 
 const paymentsFetcher = async (id: string): Promise<Payment[]> => {
@@ -125,17 +140,17 @@ export default function CustomerDetailPage() {
     () => customerFetcher(customerId)
   );
   
-  const { data: transactions, error: transactionsError, isLoading: transactionsLoading } = useSWR(
+  const { data: transactions, isLoading: transactionsLoading } = useSWR(
     customerId ? `transactions:${customerId}` : null,
     () => transactionsFetcher(customerId)
   );
   
-  const { data: payments, error: paymentsError, isLoading: paymentsLoading } = useSWR(
+  const { data: payments, isLoading: paymentsLoading } = useSWR(
     customerId ? `payments:${customerId}` : null,
     () => paymentsFetcher(customerId)
   );
   
-  const { data: inventory, error: inventoryError, isLoading: inventoryLoading } = useSWR(
+  const { data: inventory, isLoading: inventoryLoading } = useSWR(
     "inventory:list",
     inventoryFetcher
   );
