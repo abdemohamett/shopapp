@@ -156,7 +156,7 @@ export default function UsersPage() {
               <Input type="password" placeholder="Password" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} className="rounded-xl" />
             </div>
             <div className="flex gap-2">
-              <Select value={newRole} onValueChange={(v) => setNewRole(v as any)}>
+              <Select value={newRole} onValueChange={(v) => setNewRole(v as "admin" | "staff")}>
                 <SelectTrigger className="rounded-xl w-full">
                   <SelectValue placeholder="Role" />
                 </SelectTrigger>
@@ -200,7 +200,7 @@ export default function UsersPage() {
                     <TableRow key={u.id} className="hover:bg-orange-50/40">
                       <TableCell className="font-medium text-gray-900">{u.username}</TableCell>
                       <TableCell>
-                        <Select defaultValue={u.role} onValueChange={(v) => updateRole(u, v as any)}>
+                        <Select defaultValue={u.role} onValueChange={(v) => updateRole(u, v as "admin" | "staff")}>
                           <SelectTrigger className="rounded-xl h-9 w-32" disabled={roleBusyId === u.id}>
                             <SelectValue />
                           </SelectTrigger>
@@ -260,7 +260,7 @@ export default function UsersPage() {
                   </div>
                 </div>
                 <div className="flex items-center justify-between">
-                  <Select defaultValue={u.role} onValueChange={(v) => updateRole(u, v as any)}>
+                  <Select defaultValue={u.role} onValueChange={(v) => updateRole(u, v as "admin" | "staff")}>
                     <SelectTrigger className="rounded-xl h-9 w-32" disabled={roleBusyId === u.id}>
                       <SelectValue />
                     </SelectTrigger>

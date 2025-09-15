@@ -11,7 +11,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Phone, ArrowRight, DollarSign, Plus } from "lucide-react";
+import { Phone, DollarSign, Plus } from "lucide-react";
 
 type Customer = { 
   id: string; 
@@ -89,9 +89,11 @@ export default function CustomersList() {
   const [sortBy, setSortBy] = useState<"name" | "debt_desc" | "debt_asc" | "recent">("debt_desc");
 
   // Derived data: filter + sort (must run before any returns)
-  const filteredSorted = useMemo(() => {
+  type CustomerWithSums = Customer & { _transactions_sum: number; _payments_sum: number };
+
+  const filteredSorted = useMemo((): CustomerWithSums[] => {
     const q = query.trim().toLowerCase();
-    const source = (data ?? []) as (Customer & { _transactions_sum: number; _payments_sum: number })[];
+    const source: CustomerWithSums[] = (data ?? []) as CustomerWithSums[];
     let items = source.filter(c =>
       !q || c.name.toLowerCase().includes(q) || (c.phone ?? "").toLowerCase().includes(q)
     );
@@ -109,7 +111,7 @@ export default function CustomersList() {
         items = items.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
         break;
     }
-    return items;
+    return items as CustomerWithSums[];
   }, [data, query, sortBy]);
 
   const totals = useMemo(() => {
@@ -175,7 +177,7 @@ export default function CustomersList() {
               onChange={(e) => setQuery(e.target.value)}
               className="h-10 rounded-xl"
             />
-            <Select value={sortBy} onValueChange={(v) => setSortBy(v as any)}>
+            <Select value={sortBy} onValueChange={(v) => setSortBy(v as "name" | "debt_desc" | "debt_asc" | "recent")}>
               <SelectTrigger className="h-10 rounded-xl min-w-40">
                 <SelectValue placeholder="Sort by" />
               </SelectTrigger>
@@ -259,8 +261,8 @@ export default function CustomersList() {
                 </TableCell>
                     <TableCell className="text-sm text-gray-700">{c.phone || "—"}</TableCell>
                     <TableCell className="text-sm text-gray-700">{new Date(c.created_at).toLocaleDateString()}</TableCell>
-                    <TableCell className="text-right font-medium text-gray-900">${(c as any)._transactions_sum.toFixed(2)}</TableCell>
-                    <TableCell className="text-right font-medium text-green-700">${(c as any)._payments_sum.toFixed(2)}</TableCell>
+                    <TableCell className="text-right font-medium text-gray-900">${c._transactions_sum.toFixed(2)}</TableCell>
+                    <TableCell className="text-right font-medium text-green-700">${c._payments_sum.toFixed(2)}</TableCell>
                     <TableCell className="text-right">
                       <Badge variant={c.total_debt > 0 ? "destructive" : "secondary"} className="font-semibold">
                         ${c.total_debt.toFixed(2)}

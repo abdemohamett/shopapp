@@ -11,7 +11,7 @@ function isAdmin(): boolean {
   const role = document.cookie.match(/ui_role=([^;]+)/)?.[1];
   return role === "admin";
 }
-import { Package, DollarSign, TrendingUp } from "lucide-react";
+import { Package } from "lucide-react";
 
 type InventoryItem = {
   id: string;
@@ -98,7 +98,6 @@ export default function InventoryList() {
         const profitMargin = item.cost > 0 ? ((profit / item.cost) * 100) : 0;
         const totalValue = item.price * item.quantity;
         const totalCost = item.cost * item.quantity;
-        const totalProfit = totalValue - totalCost;
 
         return (
           <Card key={item.id} className="rounded-2xl shadow-sm border border-gray-200 hover:shadow-md transition-all duration-200 hover:scale-[1.01]">

@@ -9,7 +9,7 @@ export default async function AddDebtPage() {
   const cookieStore = await cookies();
   if (cookieStore.get("auth")?.value !== "true") redirect("/");
 
-  async function submit() {
+  async function submit(formData: FormData) {
     "use server";
     redirect("/customers");
   }
